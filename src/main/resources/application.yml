@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: smart-home-control
+
+# The @Scheduled cron uses the JVM local time zone (January 1st, 1:00 AM).
