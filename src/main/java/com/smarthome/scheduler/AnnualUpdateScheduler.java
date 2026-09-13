@@ -31,7 +31,8 @@ public class AnnualUpdateScheduler {
         for (Appliance appliance : appliances) {
             try {
                 appliance.turnOff();
-                System.out.println(appliance.getName() + " is now OFF");
+                System.out.println(appliance.getType() + " " + appliance.getName()
+                        + " is now " + appliance.getPowerState());
             } catch (ApplianceException e) {
                 System.out.println("Could not turn off " + appliance.getName() + ": " + e.getMessage());
             }

@@ -1,12 +1,15 @@
 package com.smarthome.adapter;
 
 import com.smarthome.device.Light;
+import com.smarthome.device.SwitchPosition;
 import com.smarthome.domain.Appliance;
 import com.smarthome.domain.ApplianceException;
+import com.smarthome.domain.ApplianceType;
+import com.smarthome.domain.PowerState;
 
 /**
  * Adapter for Light.
- * Converts turnOff() into toggling the switch to the off position.
+ * Converts turnOff() into toggling the switch to the OFF position.
  */
 public class LightAdapter implements Appliance {
 
@@ -22,9 +25,14 @@ public class LightAdapter implements Appliance {
     }
 
     @Override
+    public ApplianceType getType() {
+        return ApplianceType.LIGHT;
+    }
+
+    @Override
     public void turnOn() {
         try {
-            if (!light.isOn()) {
+            if (light.getPosition() == SwitchPosition.OFF) {
                 light.toggle();
             }
         } catch (Exception e) {
@@ -35,7 +43,7 @@ public class LightAdapter implements Appliance {
     @Override
     public void turnOff() {
         try {
-            if (light.isOn()) {
+            if (light.getPosition() == SwitchPosition.ON) {
                 light.toggle();
             }
         } catch (Exception e) {
@@ -44,7 +52,7 @@ public class LightAdapter implements Appliance {
     }
 
     @Override
-    public boolean isOn() {
-        return light.isOn();
+    public PowerState getPowerState() {
+        return light.getPosition() == SwitchPosition.ON ? PowerState.ON : PowerState.OFF;
     }
 }

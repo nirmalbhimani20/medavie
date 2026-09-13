@@ -3,6 +3,8 @@ package com.smarthome.adapter;
 import com.smarthome.device.UnreachableDevice;
 import com.smarthome.domain.Appliance;
 import com.smarthome.domain.ApplianceException;
+import com.smarthome.domain.ApplianceType;
+import com.smarthome.domain.PowerState;
 
 /**
  * Adapter for an offline device.
@@ -22,6 +24,11 @@ public class UnreachableDeviceAdapter implements Appliance {
     }
 
     @Override
+    public ApplianceType getType() {
+        return ApplianceType.SPACE_HEATER;
+    }
+
+    @Override
     public void turnOn() {
         throw new ApplianceException(device.getName() + " is offline and did not respond");
     }
@@ -36,7 +43,7 @@ public class UnreachableDeviceAdapter implements Appliance {
     }
 
     @Override
-    public boolean isOn() {
-        return true;
+    public PowerState getPowerState() {
+        return PowerState.ON;
     }
 }

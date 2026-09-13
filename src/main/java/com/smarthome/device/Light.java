@@ -6,14 +6,14 @@ package com.smarthome.device;
  */
 public class Light {
 
-    private boolean on;
+    private SwitchPosition position = SwitchPosition.OFF;
 
     public void toggle() {
-        on = !on;
-        System.out.println("Light switch toggled. Now " + (on ? "ON" : "OFF"));
+        position = (position == SwitchPosition.ON) ? SwitchPosition.OFF : SwitchPosition.ON;
+        System.out.println("Light switch toggled. Now " + position);
     }
 
-    public boolean isOn() {
-        return on;
+    public SwitchPosition getPosition() {
+        return position;
     }
 }

@@ -4,21 +4,25 @@ import com.smarthome.domain.ApplianceException;
 
 /**
  * Fan device (Adaptee).
- * It has no power button. Speed 0 = off, 1 and 2 = on.
+ * It has no power button. Speed OFF means the fan is stopped.
  */
 public class Fan {
 
-    private int speed;
+    private FanSpeed speed = FanSpeed.OFF;
 
-    public void setSpeed(int speed) {
-        if (speed < 0 || speed > 2) {
-            throw new ApplianceException("Fan speed must be 0, 1, or 2, got: " + speed);
+    public void setSpeed(FanSpeed speed) {
+        if (speed == null) {
+            throw new ApplianceException("Fan speed must not be null");
         }
         this.speed = speed;
-        System.out.println("Fan speed set to " + speed);
+        System.out.println("Fan speed set to " + speed + " (" + speed.getValue() + ")");
     }
 
-    public int getSpeed() {
+    public void setSpeed(int value) {
+        setSpeed(FanSpeed.fromValue(value));
+    }
+
+    public FanSpeed getSpeed() {
         return speed;
     }
 }

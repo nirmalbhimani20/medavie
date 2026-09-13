@@ -8,20 +8,17 @@ import com.smarthome.domain.ApplianceException;
  */
 public class AirConditioner {
 
-    public static final String MODE_OFF = "OFF";
-    public static final String MODE_COOL = "COOL";
+    private ThermostatMode mode = ThermostatMode.OFF;
 
-    private String mode = MODE_OFF;
-
-    public void setMode(String mode) {
-        if (mode == null || (!MODE_OFF.equals(mode) && !MODE_COOL.equals(mode))) {
-            throw new ApplianceException("Air conditioner mode must be OFF or COOL, got: " + mode);
+    public void setMode(ThermostatMode mode) {
+        if (mode == null) {
+            throw new ApplianceException("Air conditioner mode must not be null");
         }
         this.mode = mode;
         System.out.println("Air conditioner mode set to " + mode);
     }
 
-    public String getMode() {
+    public ThermostatMode getMode() {
         return mode;
     }
 }

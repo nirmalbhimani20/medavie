@@ -6,7 +6,9 @@ import com.smarthome.adapter.LightAdapter;
 import com.smarthome.adapter.UnreachableDeviceAdapter;
 import com.smarthome.device.AirConditioner;
 import com.smarthome.device.Fan;
+import com.smarthome.device.FanSpeed;
 import com.smarthome.device.Light;
+import com.smarthome.device.ThermostatMode;
 import com.smarthome.device.UnreachableDevice;
 import com.smarthome.domain.Appliance;
 import com.smarthome.scheduler.AnnualUpdateScheduler;
@@ -36,14 +38,14 @@ public class SmartHomeApplication {
     @Bean
     public Appliance fan() {
         Fan fan = new Fan();
-        fan.setSpeed(2);
+        fan.setSpeed(FanSpeed.HIGH);
         return new FanAdapter(fan);
     }
 
     @Bean
     public Appliance airConditioner() {
         AirConditioner airConditioner = new AirConditioner();
-        airConditioner.setMode(AirConditioner.MODE_COOL);
+        airConditioner.setMode(ThermostatMode.COOL);
         return new AirConditionerAdapter(airConditioner);
     }
 
@@ -61,13 +63,15 @@ public class SmartHomeApplication {
         return args -> {
             System.out.println("=== Before annual update ===");
             appliances.forEach(appliance ->
-                    System.out.println(appliance.getName() + " = " + (appliance.isOn() ? "ON" : "OFF")));
+                    System.out.println(appliance.getType() + " " + appliance.getName()
+                            + " = " + appliance.getPowerState()));
 
             scheduler.turnOffAllDevices();
 
             System.out.println("=== After annual update ===");
             appliances.forEach(appliance ->
-                    System.out.println(appliance.getName() + " = " + (appliance.isOn() ? "ON" : "OFF")));
+                    System.out.println(appliance.getType() + " " + appliance.getName()
+                            + " = " + appliance.getPowerState()));
         };
     }
 }

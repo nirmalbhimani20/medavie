@@ -1,8 +1,11 @@
 package com.smarthome.adapter;
 
 import com.smarthome.device.AirConditioner;
+import com.smarthome.device.ThermostatMode;
 import com.smarthome.domain.Appliance;
 import com.smarthome.domain.ApplianceException;
+import com.smarthome.domain.ApplianceType;
+import com.smarthome.domain.PowerState;
 
 /**
  * Adapter for Air Conditioner.
@@ -22,10 +25,15 @@ public class AirConditionerAdapter implements Appliance {
     }
 
     @Override
+    public ApplianceType getType() {
+        return ApplianceType.AIR_CONDITIONER;
+    }
+
+    @Override
     public void turnOn() {
         try {
-            if (AirConditioner.MODE_OFF.equals(airConditioner.getMode())) {
-                airConditioner.setMode(AirConditioner.MODE_COOL);
+            if (airConditioner.getMode() == ThermostatMode.OFF) {
+                airConditioner.setMode(ThermostatMode.COOL);
             }
         } catch (Exception e) {
             throw new ApplianceException("Failed to turn on Air Conditioner: " + e.getMessage(), e);
@@ -35,14 +43,14 @@ public class AirConditionerAdapter implements Appliance {
     @Override
     public void turnOff() {
         try {
-            airConditioner.setMode(AirConditioner.MODE_OFF);
+            airConditioner.setMode(ThermostatMode.OFF);
         } catch (Exception e) {
             throw new ApplianceException("Failed to turn off Air Conditioner: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public boolean isOn() {
-        return !AirConditioner.MODE_OFF.equals(airConditioner.getMode());
+    public PowerState getPowerState() {
+        return airConditioner.getMode() == ThermostatMode.OFF ? PowerState.OFF : PowerState.ON;
     }
 }

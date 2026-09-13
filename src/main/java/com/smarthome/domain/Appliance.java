@@ -11,9 +11,15 @@ public interface Appliance {
 
     String getName();
 
+    ApplianceType getType();
+
     void turnOn();
 
     void turnOff();
 
-    boolean isOn();
+    PowerState getPowerState();
+
+    default boolean isOn() {
+        return getPowerState() == PowerState.ON;
+    }
 }

@@ -29,7 +29,7 @@ Every new device would force a change in the scheduler.
 
 **Adapter pattern** solves that.
 
-1. **`domain.Appliance`** — common interface: `turnOn()`, `turnOff()`, `isOn()`.
+1. **`domain.Appliance`** — common interface: `turnOn()`, `turnOff()`, `getPowerState()`.
    This is the **Target**.
 2. **`device`** — Light, Fan, AirConditioner with their own APIs.
    These are the **Adaptees**.
@@ -38,9 +38,23 @@ Every new device would force a change in the scheduler.
 4. **`scheduler`** — Spring injects `List<Appliance>` and only calls `turnOff()`.
    It never mentions Light, Fan, or Air Conditioner.
 
+**Enums** keep invalid values out of the code:
+
+| Enum              | Where    | Values                         | Why it exists                                      |
+| ----------------- | -------- | ------------------------------ | -------------------------------------------------- |
+| `PowerState`      | domain   | `ON`, `OFF`                    | One shared language after the adapter              |
+| `ApplianceType`   | domain   | `LIGHT`, `FAN`, ...            | Type-safe name for logs instead of a raw string    |
+| `SwitchPosition`  | device   | `ON`, `OFF`                    | Light only has a switch                            |
+| `FanSpeed`        | device   | `OFF(0)`, `LOW(1)`, `HIGH(2)`  | Assignment speeds, stored as numbers on the device |
+| `ThermostatMode`  | device   | `OFF`, `COOL`, `HEAT`          | AC is off only when mode is `OFF`                  |
+
+The adapter's job is to map the device enum to `PowerState`. Example: `FanSpeed.OFF` becomes `PowerState.OFF`, and `FanSpeed.HIGH` becomes `PowerState.ON`.
+
+`FanSpeed` is the one to talk about in an interview: it is an enum with a field (`0`, `1`, `2`) and a `fromValue()` method that throws `ApplianceException` if someone passes `3`.
+
 **Exception handling** is also kept simple:
 
-- Devices throw `ApplianceException` for bad input (fan speed not 0/1/2, invalid AC mode)
+- Devices throw `ApplianceException` for bad input (unknown fan speed, null AC mode)
   or when a device is offline.
 - Adapters catch device errors and wrap them in `ApplianceException`.
 - The scheduler uses try/catch **per appliance**. One offline device is logged,
@@ -59,9 +73,9 @@ for (Appliance appliance : appliances) {
 To add a new device later: write a device class + an adapter. Do not change the scheduler.
 
 ```
-scheduler  -->  Appliance  <--  LightAdapter      -->  Light.toggle()
-                           <--  FanAdapter         -->  Fan.setSpeed(0)
-                           <--  AirConditionerAdapter -->  AirConditioner.setMode("OFF")
+scheduler  -->  Appliance  <--  LightAdapter           -->  Light.toggle() to SwitchPosition.OFF
+                           <--  FanAdapter              -->  Fan.setSpeed(FanSpeed.OFF)
+                           <--  AirConditionerAdapter   -->  AirConditioner.setMode(ThermostatMode.OFF)
 ```
 
 The yearly job is one Spring annotation:
@@ -80,8 +94,9 @@ Nothing else happens during the update. Devices are not turned back on.
 ## Project layout
 
 ```
-domain/      Appliance, ApplianceException
+domain/      Appliance, ApplianceException, PowerState, ApplianceType
 device/      Light, Fan, AirConditioner, UnreachableDevice
+             SwitchPosition, FanSpeed, ThermostatMode
 adapter/     LightAdapter, FanAdapter, AirConditionerAdapter, UnreachableDeviceAdapter
 scheduler/   AnnualUpdateScheduler
 ```
