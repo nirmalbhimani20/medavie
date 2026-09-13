@@ -5,7 +5,7 @@ Simple Spring Boot app that controls a Light, Fan, and Air Conditioner using the
 
 ## How to run
 
-Needs JDK 17+ and Maven.
+Needs JDK 11+ and Maven.
 
 ```bash
 mvn spring-boot:run
